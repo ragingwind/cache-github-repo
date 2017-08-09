@@ -42,9 +42,6 @@
 		"xo": "^0.18.2"
 	},
 	"xo": {
-		"ignores": [
-			"examples/**/*"
-		],
 		"extends": "prettier",
 		"rules": {
 			"unicorn/no-process-exit": 0
