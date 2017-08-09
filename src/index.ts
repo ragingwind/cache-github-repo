@@ -5,13 +5,13 @@ import fs = require('fs-extra')
 import findCacheDir = require('find-cache-dir')
 import fetch = require('node-fetch')
 import download = require('download')
-import rimraf = require('rimraf')
+import parentModule = require('parent-module')
 
 async function checkUpdatable(repo: string) {
 	const cacheDir = findCacheDir({
 		name: 'cache-github-repo',
 		create: true,
-		cwd: __dirname
+		cwd: parentModule()
 	})
 	const cacheManifestPath = path.join(cacheDir, 'cache.json')
 	let cacheManifest = {

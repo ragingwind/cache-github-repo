@@ -34,6 +34,7 @@
 		"find-cache-dir": "^1.0.0",
 		"fs-extra": "^4.0.1",
 		"node-fetch": "^1.7.2",
+		"parent-module": "^0.1.0",
 		"prettier": "^1.5.3"
 	},
 	"devDependencies": {
