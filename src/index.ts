@@ -2,18 +2,12 @@
 
 import path = require('path')
 import fs = require('fs-extra')
-import findCacheDir = require('find-cache-dir')
 import fetch = require('node-fetch')
 import download = require('download')
 import parentModule = require('parent-module')
 
-async function checkUpdatable(repo: string) {
-	const cacheDir = findCacheDir({
-		name: 'cache-github-repo',
-		create: true,
-		cwd: parentModule()
-	})
-	const cacheManifestPath = path.join(cacheDir, 'cache.json')
+async function checkUpdatable(repo: string, cachePath) {
+	const cacheManifestPath = path.join(cachePath, 'cache-manifest.json')
 	let cacheManifest = {
 		updated: 0
 	}
@@ -64,12 +58,17 @@ async function downloadPackage(repo, dest) {
 module.exports = async (repo, dest, opts) => {
 	opts = {
 		...{
-			force: false
+			force: false,
+			cachePath: undefined
 		},
 		...opts
 	}
 
-	const update = await checkUpdatable(repo)
+	if (!opts.cachePath) {
+		throw new TypeError(`Invalid cache path, ${opts.cachePath}`)
+	}
+
+	const update = await checkUpdatable(repo, opts.cachePath)
 	if (opts.force || update) {
 		await downloadPackage(repo, dest)
 	}

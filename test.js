@@ -5,7 +5,7 @@ import cache from './dist';
 import findCacheDir from 'find-cache-dir'
 import parentModule from 'parent-module'
 
-const cacheDir = findCacheDir({
+const cachePath = findCacheDir({
 	name: 'test-cache-github-repo',
 	create: true,
 	cwd: parentModule()
@@ -13,6 +13,9 @@ const cacheDir = findCacheDir({
 
 test(async t => {
 	const repo = 'ragingwind/cache-github-repo'
-	await cache(repo, path.join(cacheDir, repo), {force: true})
-	t.true(await fs.pathExists(path.join(cacheDir, repo, 'package.json')))
+	await cache(repo, path.join(cachePath, repo), {
+		force: true,
+		cachePath
+	})
+	t.true(await fs.pathExists(path.join(cachePath, repo, 'package.json')))
 })
