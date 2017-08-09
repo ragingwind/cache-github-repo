@@ -23,7 +23,10 @@
 		"dist"
 	],
 	"keywords": [
-		""
+		"cache",
+		"github",
+		"download",
+		"cache-github-repo"
 	],
 	"dependencies": {
 		"download": "^6.2.5",
