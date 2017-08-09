@@ -1,6 +1,6 @@
 # cache-github-repo [![Build Status](https://travis-ci.org/ragingwind/cache-github-repo.svg?branch=master)](https://travis-ci.org/ragingwind/cache-github-repo)
 
-> My ultimate module
+> Download files of the github repository at the local cache by managing commit tracing
 
 
 ## Install
@@ -15,30 +15,33 @@ $ npm install cache-github-repo
 ```js
 const cacheGithubRepo = require('cache-github-repo');
 
-cacheGithubRepo('unicorns');
-//=> 'unicorns & rainbows'
+await cacheGithubRepo('zeit/next.js', path.join('dest'))
 ```
-
 
 ## API
 
-### cacheGithubRepo(input, [options])
+### cacheGithubRepo(repo, dest, [options])
 
-#### input
+#### repo
 
 Type: `string`
 
-Lorem ipsum.
+repository names on github. ex) `ragingwind/cache-github-repo`
+
+#### dest
+
+Type: `string`
+
+Path for unzipped files after downloading
 
 #### options
 
-##### foo
+##### force
 
 Type: `boolean`<br>
 Default: `false`
 
-Lorem ipsum.
-
+If it true, the download will be started whenever
 
 ## License
 
