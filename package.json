@@ -1,0 +1,57 @@
+{
+	"name": "cache-github-repo",
+	"version": "0.0.0",
+	"description": "My ultimate module",
+	"license": "MIT",
+	"repository": "ragingwind/cache-github-repo",
+	"author": {
+		"name": "Jimmy Moon",
+		"email": "ragingwind@gmail.com",
+		"url": "ragingwind.me"
+	},
+	"engines": {
+		"node": ">=6"
+	},
+	"scripts": {
+		"precommit": "lint-staged",
+		"lint": "xo",
+		"test": "tsc && ava",
+		"build": "tsc",
+		"prepublishOnly": "rm -rf ./dist && npm run build"
+	},
+	"files": [
+		"dist"
+	],
+	"keywords": [
+		""
+	],
+	"dependencies": {
+		"find-cache-dir": "^1.0.0",
+		"mz": "^2.6.0",
+		"prettier": "^1.5.3"
+	},
+	"devDependencies": {
+		"@types/core-js": "^0.9.42",
+		"@types/node": "^8.0.20",
+		"ava": "^0.19.1",
+		"husky": "^0.14.3",
+		"lint-staged": "^4.0.3",
+		"typescript": "^2.4.2",
+		"xo": "^0.18.2"
+	},
+	"xo": {
+		"ignores": [
+			"examples/**/*"
+		],
+		"extends": "prettier",
+		"rules": {
+			"unicorn/no-process-exit": 0
+		}
+	},
+	"lint-staged": {
+		"*.{ts,tsx}": [
+			"prettier --single-quote --no-semi --use-tabs --parser typescript --write",
+			"git add"
+		]
+	}
+}
