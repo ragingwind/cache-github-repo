@@ -29,7 +29,7 @@ async function checkUpdatable(repo: string) {
 	const latest = await res.json()
 	const current = cacheManifest[repo]
 
-	if (!current || current.sha !== latest[0].sha) {
+	if (!current || !latest || !latest[0] || current.sha !== latest[0].sha) {
 		cacheManifest.updated = Date.now()
 		cacheManifest[repo] = latest[0]
 
