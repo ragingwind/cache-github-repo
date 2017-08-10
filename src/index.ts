@@ -94,27 +94,4 @@ class CacheGithubRepo {
 	}
 }
 
-// 		cacheManifest = manifest
-// 		.then(latest => {
-// 		})
-
-// 	})
-
-// })
-// })
-// })
-// }
-// }
-
 export default CacheGithubRepo
-// module.exports = (repo, dest, opts) => {
-// 	return new CacheGithubRepo(repo, dest, opts)
-// 	// if (!opts.cachePath) {
-// 	// 	throw new TypeError(`Invalid cache path, ${opts.cachePath}`)
-// 	// }
-
-// 	// const update = await checkUpdatable(repo, opts.cachePath)
-// 	// if (opts.force || update) {
-// 	// 	await downloadPackage(repo, dest)
-// 	// }
-// }
