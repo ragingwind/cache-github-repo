@@ -13,35 +13,52 @@ $ npm install cache-github-repo
 ## Usage
 
 ```js
-const cacheGithubRepo = require('cache-github-repo');
+const CacheGithubRepo = require('cache-github-repo');
 
-await cacheGithubRepo('zeit/next.js', path.join('dest'))
+const cache = new CacheGithubRepo()
+
+if (await cache.updatable(repo, './node_modules/')) {
+	await cache.cache('zeit/next.js', path.join('dest'))
+}
 ```
 
 ## API
 
-### cacheGithubRepo(repo, dest, [options])
+### CacheGithubRepo()
 
-#### repo
+It returns the instance of cache manager
+
+#### updatable
+
+Check the repo can be updated, is out of dated
+
+##### repo
 
 Type: `string`
 
-repository names on github. ex) `ragingwind/cache-github-repo`
+Repository names on github. ex) `ragingwind/cache-github-repo`
 
-#### dest
+##### cachePath
 
 Type: `string`
 
-Path for unzipped files after downloading
+Path for saving of cache manifest file, named by `cache-github-repo.json`. Default is parent's `node_module/.cache`
 
-#### options
+#### cache
 
-##### force
+Cache the repo to local
 
-Type: `boolean`<br>
-Default: `false`
+##### repo
 
-If it true, the download will be started whenever
+Type: `string`
+
+Repository names on github. ex) `ragingwind/cache-github-repo`
+
+##### dest
+
+Type: `string`
+
+unzipped files after downloading
 
 ## License
 

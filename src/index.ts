@@ -5,71 +5,116 @@ import fs = require('fs-extra')
 import fetch = require('node-fetch')
 import download = require('download')
 import parentModule = require('parent-module')
+import findCacheDir = require('find-cache-dir')
 
-async function checkUpdatable(repo: string, cachePath) {
-	const cacheManifestPath = path.join(cachePath, 'cache-manifest.json')
-	let cacheManifest = {
-		updated: 0
+class CacheGithubRepo {
+	cache(repo: string, dest: string) {
+		const url = `https://codeload.github.com/${repo}/tar.gz/master`
+
+		dest = path.resolve(dest)
+
+		return fs
+			.pathExists(dest)
+			.then(exist => exist && fs.remove(dest))
+			.then(() =>
+				download(url, path.resolve(dest), {
+					extract: true,
+					strip: 1,
+					mode: '666',
+					headers: {
+						accept: 'application/zip'
+					}
+				})
+			)
 	}
 
-	if (fs.existsSync(cacheManifestPath)) {
-		cacheManifest = JSON.parse(await fs.readFile(cacheManifestPath))
-	}
-
-	const res = await fetch(`https://api.github.com/repos/${repo}/commits`, {
-		method: 'GET'
-	})
-
-	const latest = await res.json()
-	const current = cacheManifest[repo]
-
-	if (!current || !latest || !latest[0] || current.sha !== latest[0].sha) {
-		cacheManifest.updated = Date.now()
-		cacheManifest[repo] = latest[0]
-
-		await fs.writeFile(
-			cacheManifestPath,
-			JSON.stringify(cacheManifest, null, '\t')
-		)
-		return true
-	}
-
-	return false
-}
-
-async function downloadPackage(repo, dest) {
-	const url = `https://codeload.github.com/${repo}/tar.gz/master`
-	dest = path.resolve(dest)
-
-	if (await fs.pathExists(dest)) {
-		await fs.remove(dest)
-	}
-
-	return download(url, path.resolve(dest), {
-		extract: true,
-		strip: 1,
-		mode: '666',
-		headers: {
-			accept: 'application/zip'
+	updatable(repo: string, cachePath) {
+		if (!repo) {
+			throw Error('Invalid repo address for checking cache files on github')
 		}
-	})
+
+		if (!cachePath) {
+			cachePath = findCacheDir({
+				name: 'cache-github-repo',
+				create: true,
+				cwd: parentModule() || __dirname
+			})
+		}
+		const cacheManifestPath = path.join(cachePath, 'cache-github-repo.json')
+
+		const readManifest = () => {
+			return fs
+				.pathExists(cacheManifestPath)
+				.then(
+					exist => (exist ? fs.readJson(cacheManifestPath) : { updated: 0 })
+				)
+				.then(current => {
+					return fetch(`https://api.github.com/repos/${repo}/commits`, {
+						method: 'GET'
+					})
+						.then(res => res.json())
+						.then(latest => {
+							return {
+								current,
+								latest
+							}
+						})
+				})
+		}
+
+		const updateManifest = manifest => {
+			const { current, latest } = manifest
+
+			if (
+				!current ||
+				!current[repo] ||
+				!latest ||
+				!latest[0] ||
+				current[repo].sha !== latest[0].sha
+			) {
+				current.updated = Date.now()
+				current[repo] = latest[0]
+
+				return fs
+					.writeJson(cacheManifestPath, current, { spaces: '\t' })
+					.then(() => {
+						return true
+					})
+					.catch(() => {
+						return false
+					})
+			}
+
+			return Promise.resolve(false)
+		}
+
+		return readManifest().then(updateManifest).catch(() => {
+			return false
+		})
+	}
 }
 
-module.exports = async (repo, dest, opts) => {
-	opts = {
-		...{
-			force: false,
-			cachePath: undefined
-		},
-		...opts
-	}
+// 		cacheManifest = manifest
+// 		.then(latest => {
+// 		})
 
-	if (!opts.cachePath) {
-		throw new TypeError(`Invalid cache path, ${opts.cachePath}`)
-	}
+// 	})
 
-	const update = await checkUpdatable(repo, opts.cachePath)
-	if (opts.force || update) {
-		await downloadPackage(repo, dest)
-	}
-}
+// })
+// })
+// })
+// }
+// }
+
+export default CacheGithubRepo
+// module.exports = (repo, dest, opts) => {
+// 	return new CacheGithubRepo(repo, dest, opts)
+// 	// if (!opts.cachePath) {
+// 	// 	throw new TypeError(`Invalid cache path, ${opts.cachePath}`)
+// 	// }
+
+// 	// const update = await checkUpdatable(repo, opts.cachePath)
+// 	// if (opts.force || update) {
+// 	// 	await downloadPackage(repo, dest)
+// 	// }
+// }
