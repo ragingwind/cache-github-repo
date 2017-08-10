@@ -1,6 +1,6 @@
 {
 	"name": "cache-github-repo",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "Download files of the github repository at the local cache by managing commit tracing",
 	"license": "MIT",
 	"repository": "ragingwind/cache-github-repo",
